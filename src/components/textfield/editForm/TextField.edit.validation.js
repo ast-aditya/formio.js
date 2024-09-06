@@ -34,14 +34,55 @@ export default [
     type: 'number',
     tooltip: 'The maximum amount of words that can be added to this field.',
     input: true
+  },{
+    weight: 130,
+    key: 'validate.regexTypeCategory',
+    label: 'Regular Expression Type Category',
+    placeholder: 'Select a Pattern Type',
+    type: 'select',
+    tooltip: 'Choose between custom or pre-saved regex patterns.',
+    input: true,
+    data: {
+      values: [
+        { label: 'Presaved Pattern', value: 'presaved' },
+        { label: 'Custom Pattern', value: 'custom' }
+      ]
+    },
+    defaultValue: 'presaved'
   },
   {
-    weight: 130,
+    weight: 135,
     key: 'validate.pattern',
-    label: 'Regular Expression Pattern',
-    placeholder: 'Regular Expression Pattern',
+    label: 'Presaved Regular Expression Pattern',
+    placeholder: 'Select a Pre-saved Regular Expression Pattern',
+    type: 'select',
+    tooltip: 'Choose from common patterns.',
+    input: true,
+    data: {
+      values: [
+        { label: 'Email', value: '^\\S+@\\S+\\.\\S+$' },
+      ]
+    },
+    conditional: {
+      json: { '===': [{ var: 'data.validate.regexTypeCategory' }, 'presaved'] }
+    },
+    onChange: (component, form, row, instance) => {
+      instance.updateValue({ validate: { ...row.validate, pattern: row.validate.pattern } });
+    }
+  },
+  {
+    weight: 140,
+    key: 'validate.pattern',
+    label: 'Custom Regular Expression',
+    placeholder: 'Enter your custom regex pattern',
     type: 'textfield',
     tooltip: 'The regular expression pattern test that the field value must pass before the form can be submitted.',
-    input: true
+    input: true,
+    conditional: {
+      json: { '===': [{ var: 'data.validate.regexTypeCategory' }, 'custom'] }
+    },
+    onChange: (component, form, row, instance) => {
+      instance.updateValue({ validate: { ...row.validate, pattern: row.validate.pattern } });
+    }
   }
 ];
